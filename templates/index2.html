@@ -1,0 +1,102 @@
+<!DOCTYPE html>  
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="">
+<meta name="author" content="">
+<link rel="icon" type="image/png" sizes="16x16" href="{{url_for('static', filename='plugins/images/favicon.png')}}">
+<title>Insurance GPT</title>
+<!-- Bootstrap Core CSS -->
+<link href="{{url_for('static', filename='bootstrap/dist/css/bootstrap.min.css')}}" rel="stylesheet">
+<!-- animation CSS -->
+<link href="{{url_for('static', filename='css/animate.css')}}" rel="stylesheet">
+<!-- Custom CSS -->
+<link href="{{url_for('static', filename='css/style.css')}}" rel="stylesheet">
+<!-- color CSS -->
+<link href="{{url_for('static', filename='css/colors/default.css')}}" id="theme"  rel="stylesheet">
+<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+<!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+<![endif]-->
+
+
+<script type="text/javascript" 
+src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.5/socket.io.min.js"></script>
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='chatstyles.css')}}">
+
+</head>
+<body style="overflow: auto;">
+<!-- Preloader -->
+<div class="preloader">
+  <div class="cssload-speeding-wheel"></div>
+</div>
+<section id="wrapper" class="new-login-register">
+      <div class="lg-info-panel">
+              <div class="inner-panel">
+                  <a href="javascript:void(0)" class="p-20 di"><img src="{{url_for('static', filename='DezzexLogo.png')}}" style="width: 90px;"/></a>
+                  <div class="lg-content">
+                    <h2 style="text-transform: uppercase;">🚙 Revolutionize Insurance Assistance with Dezzex's AI-Powered Chatbot 🚙</h2>
+                      <p class="text-muted">Introducing the Future of Insurance Customer Support!</p>
+                  </div>
+              </div>
+      </div>
+      <div class="new-login-box">
+                <div class="white-box">
+                    <h3 class="m-b-0 p-20 di">
+                        At Dezzex, we understand the challenges faced by insurance companies 
+                        in providing prompt and accurate customer support. 
+                        That's why we're thrilled to unveil our innovative AI-powered chatbot, 
+                        designed to transform the way insurance interactions take place. 
+                        Say goodbye to long waiting times and hello to instant, personalized assistance!
+                    </h3>
+                    <button id="connect" class="btn btn-primary btn-lg btn-block text-uppercase waves-effect waves-light" type="submit">Lets Connect</button>
+                </div>
+
+                <div class="chat-box" style="margin-top: 50px;">
+    <div class="chat-box-header">
+    	<div class='app'>
+      		<span id="start-record-btn" style='float:left; cursor: pointer; padding-left: 28px;' title="Start Recording"><i class="fa fa-microphone"></i></span>
+      	</div>
+      	Botmaster
+      	<span class="chat-box-toggle"><i class="fa fa-close"></i></span>
+    </div>
+    <div class="chat-box-body">
+      <div class="chat-box-overlay"></div>
+      <div class="chat-logs"></div>
+    </div>
+    <div class="chat-input">      
+      <form>
+        <input type="text" id="chat-input" placeholder="Send a message..."/>
+      	<button type="submit" class="chat-submit" id="chat-submit" title="Send Text"><i class="fa fa-send"></i></button>
+      </form>      
+    </div>
+  </div>
+      </div>            
+  
+  
+</section>
+<!-- jQuery -->
+<script src="{{url_for('static', filename='plugins/bower_components/jquery/dist/jquery.min.js')}}"></script>
+<!-- Bootstrap Core JavaScript -->
+<script src="{{url_for('static', filename='bootstrap/dist/js/bootstrap.min.js')}}"></script>
+<!-- Menu Plugin JavaScript -->
+<script src="{{url_for('static', filename='plugins/bower_components/sidebar-nav/dist/sidebar-nav.min.js')}}"></script>
+
+<!--slimscroll JavaScript -->
+<script src="{{url_for('static', filename='js/jquery.slimscroll.js')}}"></script>
+<!--Wave Effects -->
+<script src="{{url_for('static', filename='js/waves.js')}}"></script>
+<!-- Custom Theme JavaScript -->
+<script src="{{url_for('static', filename='js/custom.min.js')}}"></script>
+<!--Style Switcher -->
+<script src="{{url_for('static', filename='plugins/bower_components/styleswitcher/jQuery.style.switcher.js')}}"></script>
+</body>
+</html>
