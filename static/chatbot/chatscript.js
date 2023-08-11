@@ -252,7 +252,7 @@ function disconnect() {
 function exeApi(msg) {
   var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
-    myHeaders.append("Authorization", "Bearer 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");
+    myHeaders.append("Authorization", "Bearer your-openai-key");
 
     var raw = JSON.stringify({
       "content": msg
