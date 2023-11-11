@@ -252,7 +252,7 @@ function disconnect() {
 function exeApi(msg) {
   var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
-    myHeaders.append("Authorization", "Bearer your-openai-api-key");
+    myHeaders.append("Authorization", "Bearer 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");
 
     var raw = JSON.stringify({
       "content": msg
@@ -270,8 +270,9 @@ function exeApi(msg) {
       .then(result => {
         result = JSON.parse(result);
         if(result.status == true) {
+          console.log("Response from server")
           console.log(result)
-          return result['data']['content']
+          return result['data']
         } else {
           return "Sorry! I didn't get you. Please try again."
         }

@@ -5,7 +5,7 @@ import requests
 #---------- socket module import -----------------
 from flask_socketio import SocketIO, join_room, leave_room
 
-from botmodel import run_conversation
+import botmodel
 
 wapp = Flask(__name__, static_url_path='/static')
 socketio = SocketIO(wapp, cors_allowed_origins="*")
@@ -39,7 +39,7 @@ def default_error_handler(e):
 def conversation_route():
     print(request.json)
     content = request.json['content']
-    resp = run_conversation(content)
+    resp = botmodel.run_conversation(content)
     return jsonify({"status": True, 'data': resp}), 200
 
 @wapp.route("/reminder/<message>/<body_text>/<to>", methods=["POST"])
