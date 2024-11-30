@@ -7,3 +7,5 @@ just add your openai api key in .env file in root directory
 I have used , flask, websocket and openai sdk
 
 You also need to set openai key in chatscript.js file and local api url
+
+Chnage language
