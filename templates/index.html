@@ -29,6 +29,10 @@
       text-decoration: solid;
       color: #000000;
     }
+
+    .chat-logs {
+      height: 100%;
+    }
   </style>
 </head>
 
@@ -55,6 +59,15 @@
                   title="Start Recording"><i class="fa fa-microphone"></i></span>
               </div>
               Insurance AI-Powered Chatbot
+              <select id="language-selector">
+                <option value="en-US" selected>English (US)</option>
+                <option value="hi-IN">Hindi (India)</option>
+                <option value="es-ES">Spanish (Spain)</option>
+                <option value="fr-FR">French (France)</option>
+                <option value="de-DE">German</option>
+                <option value="zh-CN">Chinese (Mandarin)</option>
+              </select>
+              
               <span class="chat-box-toggle" id="disconnect"><i class="fa fa-close"> Disconnect</i></span>
             </div>
             <div class="chat-box-body">

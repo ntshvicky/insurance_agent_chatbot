@@ -1,12 +1,23 @@
+var currentLanguage = "en-US"; // Default language
+
+// Update recognition language based on selection
+$('#language-selector').on('change', function () {
+    currentLanguage = $(this).val();
+    recognition.lang = currentLanguage;
+    console.log(`Language changed to: ${currentLanguage}`);
+});
+
+// Start listening for speech
 try {
   var SpeechRecognition = this.SpeechRecognition || this.webkitSpeechRecognition;
   var recognition = new SpeechRecognition();
-}
-catch(e) {
+  recognition.lang = currentLanguage; // Set the initial language
+} catch (e) {
   console.error(e);
   $('.no-browser-support').show();
   $('.app').hide();
 }
+
 
 var started = 0;
 var noteTextarea = $('#chat-input');
@@ -55,9 +66,23 @@ recognition.onstart = function() {
   instructions.text('Voice recognition activated. Try speaking into the microphone.');
 }
 
-recognition.onspeechend = function() {
-  instructions.text('You were quiet for a while so voice recognition turned itself off.');
-}
+recognition.onspeechend = function () {
+  instructions.text('You were quiet for a while, so voice recognition turned itself off.');
+  started = 0; // Reset the started flag
+  $(".fa-microphone-slash").removeClass("fa fa-microphone-slash").addClass("fa fa-microphone"); // Update mic icon
+};
+
+recognition.onend = function () {
+  if (started === 1) {
+      // Restart recognition automatically if desired
+      recognition.start();
+  } else {
+      // Update mic status to off
+      $(".fa-microphone-slash").removeClass("fa fa-microphone-slash").addClass("fa fa-microphone");
+      instructions.text('Voice recognition stopped.');
+  }
+};
+
 
 recognition.onerror = function(event) {
   if(event.error == 'no-speech') {
@@ -71,25 +96,24 @@ recognition.onerror = function(event) {
       App buttons and input 
 ------------------------------*/
 
-$('#start-record-btn').on('click', function(e) {
+$('#start-record-btn').on('click', function (e) {
   if (noteContent.length) {
-    noteContent += ' ';
+      noteContent += ' ';
   }
-  if(started==1)
-  {
-	 started = 0;
-	 recognition.stop();
-	 $(".fa-microphone-slash").removeClass("fa fa-microphone-slash").addClass("fa fa-microphone");
-	 instructions.text('Voice recognition paused.');
-  }
-  else
-  {
-	  started = 1;
-	  recognition.start();
-	  $(".fa-microphone").removeClass("fa fa-microphone").addClass("fa fa-microphone-slash");
-	  instructions.text('Voice recognition started.');
+  if (started == 1) {
+      started = 0;
+      recognition.stop();
+      $(".fa-microphone-slash").removeClass("fa fa-microphone-slash").addClass("fa fa-microphone");
+      instructions.text('Voice recognition paused.');
+  } else {
+      recognition.lang = currentLanguage; // Update language before starting
+      started = 1;
+      recognition.start();
+      $(".fa-microphone").removeClass("fa fa-microphone").addClass("fa fa-microphone-slash");
+      instructions.text('Voice recognition started.');
   }
 });
+
 
 
 $('#pause-record-btn').on('click', function(e) {
@@ -214,6 +238,7 @@ function deleteNote(dateTime) {
   localStorage.removeItem('note-' + dateTime); 
 }
 
+
 //Chat Web API Script
 var url = "http://127.0.0.1:3003";
 var socket;
@@ -238,8 +263,7 @@ function connect() {
   socket = io.connect(url + "/dd");
   socket.on('msg', async function(msg) {
     setConnected(true);
-    let message = await exeApi("Hi!")
-    response_message(message) 
+    response_message("Hello again! How can I help you with your insurance claim today?") 
   });
 }
 
@@ -252,10 +276,11 @@ function disconnect() {
 function exeApi(msg) {
   var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
-    myHeaders.append("Authorization", "Bearer your-openai-api-key");
+    myHeaders.append("Authorization", "Bearer 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");
 
     var raw = JSON.stringify({
-      "content": msg
+      "content": msg,
+      "language": currentLanguage 
     });
 
     var requestOptions = {
@@ -271,7 +296,7 @@ function exeApi(msg) {
         result = JSON.parse(result);
         if(result.status == true) {
           console.log(result)
-          return result['data']['content']
+          return result['data']
         } else {
           return "Sorry! I didn't get you. Please try again."
         }
@@ -283,17 +308,27 @@ function exeApi(msg) {
     
 }
 
+
 async function sendMessage() {
-	if(socket != null && socket.connected) {
-		var msg = $("#chat-input").val();
-    request_message(msg);
-    response_message(await exeApi(msg)) 
-  }
-  else {
-    	var msg = "Kindly connect to web server";
-		  request_message(msg);
+  if (socket != null && socket.connected) {
+      var msg = $("#chat-input").val();
+      request_message(msg); // Show the user's message
+      var processingId = showProcessing(); // Show the "Processing..." indicator
+
+      try {
+          var response = await exeApi(msg); // Call the API with language info
+          removeProcessing(processingId); // Remove the "Processing..." indicator
+          response_message(response); // Show the chatbot's response
+      } catch (error) {
+          removeProcessing(processingId); // Remove the "Processing..." indicator
+          response_message("Sorry, something went wrong. Please try again."); // Show error message
+      }
+  } else {
+      request_message("Kindly connect to the web server");
   }
 }
+
+
 
 
 $(function () {
@@ -327,24 +362,56 @@ function request_message(msg) {
     $(".chat-logs").stop().animate({ scrollTop: $(".chat-logs")[0].scrollHeight}, 1000);  
 } 
 
-function response_message(msg) {
+function showProcessing() {
+  INDEX++;
+  var str = "";
+  str += "<div id='cm-msg-" + INDEX + "' class=\"chat-msg user processing\">";
+  str += "          <span class=\"msg-avatar\">";
+  str += "            <img src=\"/static/chatbot/robot.svg\"/>";
+  str += "          </span>";
+  str += "          <div class=\"cm-msg-text\">";
+  str += "            <i>Processing...</i>";
+  str += "          </div>";
+  str += "        </div>";
+  $(".chat-logs").append(str);
+  $("#cm-msg-" + INDEX).hide().fadeIn(300);
+  $(".chat-logs").stop().animate({ scrollTop: $(".chat-logs")[0].scrollHeight }, 1000);
+  return "cm-msg-" + INDEX; // Return the ID of the processing message
+}
 
-	if(msg=="")
-		msg = "Hi! Sorry i beg your pardon.";
-    INDEX++;
-    var str="";
-    str += "<div id='cm-msg-"+INDEX+"' class=\"chat-msg user\">";
-    str += "          <span class=\"msg-avatar\">";
-    str += "            <img src=\"/static/chatbot/robot.svg\"/>";
-    str += "          </span>";
-    str += "          <div id='ct_"+INDEX+"' class=\"cm-msg-text\">";
-    str += msg;
-    str += "          <span id='sp_"+INDEX+"' style='cursor:pointer;font-size:18px;' class=\"fa fa-volume-up\" onclick=\"speaktext('"+msg+"')\"></span></div>";
-    str += "        </div>";
-    $(".chat-logs").append(str);
-    $("#cm-msg-"+INDEX).hide().fadeIn(300);  
-    $(".chat-logs").stop().animate({ scrollTop: $(".chat-logs")[0].scrollHeight}, 1000);    
-    //readOutLoud(msg);
+function removeProcessing(processingId) {
+  $("#" + processingId).remove(); // Remove the processing indicator
+}
+
+function response_message(msg) {
+  var processingId = showProcessing(); // Show processing indicator
+
+  setTimeout(() => { // Simulate a delay to show the processing UI
+      removeProcessing(processingId); // Remove processing indicator
+
+      if (msg == "") msg = "Hi! Sorry I beg your pardon.";
+      INDEX++;
+      var str = "";
+      str += "<div id='cm-msg-" + INDEX + "' class=\"chat-msg user\">";
+      str += "          <span class=\"msg-avatar\">";
+      str += "            <img src=\"/static/chatbot/robot.svg\"/>";
+      str += "          </span>";
+      str += "          <div id='ct_" + INDEX + "' class=\"cm-msg-text\">";
+      str += formatMessageForHtml(msg);;
+      str += "          <span id='sp_" + INDEX + "' style='cursor:pointer;font-size:18px;' class=\"fa fa-volume-up\" onclick=\"speaktext('" + msg + "')\"></span></div>";
+      str += "        </div>";
+      $(".chat-logs").append(str);
+      $("#cm-msg-" + INDEX).hide().fadeIn(300);
+      $(".chat-logs").stop().animate({ scrollTop: $(".chat-logs")[0].scrollHeight }, 1000);
+      // Optionally read the response out loud
+      // readOutLoud(msg);
+  }, 1000); // Adjust this timeout as needed to mimic real processing delay
+}
+
+
+
+function formatMessageForHtml(msg) {
+  return msg.replace(/(\d+)\.\s/g, '  <b>$1.</b> ').replace(/\n/g, '<br/>');
 }
 
 function speaktext(msg){ 
